@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'global_variables.dart';
+import 'cart_provider.dart';
+
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -12,6 +14,7 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
+    final cart = context.watch<CartProvider>().cart;
     return Scaffold(
       appBar: AppBar(
         title: Text('Cart'),
@@ -26,7 +29,36 @@ class _CartPageState extends State<CartPage> {
                 radius: 30,
               ),
               trailing: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                 showDialog(
+                   context: context,
+                   builder: (context) {
+                     return AlertDialog(
+                       title: Text("Delete Product", style: Theme.of(context).textTheme.titleMedium,),
+                       content: Text('Are you sure you ant to remove the product from your cart?'),
+                       actions: [
+                         TextButton(
+                             onPressed: () {
+                               Navigator.of(context).pop;
+                             },
+                             child: const Text('No',style: TextStyle(
+                               fontWeight: FontWeight.bold,
+                               color: Colors.blue
+                             ),)),
+                         TextButton(
+                             onPressed: () {
+                               Provider.of<CartProvider>(context, listen: false).removeProduct(cartItem);
+                               Navigator.of(context).pop;
+                             },
+                             child: const Text('Yes',style: TextStyle(
+                               fontWeight: FontWeight.bold,
+                               color: Colors.red
+                             ),)),
+                       ],
+                     );
+                   }
+                 );
+                },
                 icon: const Icon(Icons.delete, color: Colors.red,),),
               title: Text(cartItem['title'].toString(),
                 style: Theme.of(context).textTheme.bodySmall,),
